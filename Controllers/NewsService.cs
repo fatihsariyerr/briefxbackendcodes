@@ -16,9 +16,48 @@ public class NewsService
         _httpClientFactory = httpClientFactory;
     }
 
-    public async Task<List<News>> GetNewsFromRssFeed(string url, string publisher, string category)
+
+
+    public async Task<List<News>> InternationalGetNewsFromRssFeed(string url, string publisher, string category)
     {
-        if (publisher=="Mackolik")
+        var feed = await GetFeed(url);
+        var newsList = new List<News>();
+
+        foreach (var item in feed.Items)
+        {
+        
+            var publishDate = item.PublishDate.DateTime;
+
+            if (item.PublishDate.Offset != TimeSpan.Zero)
+            {
+                publishDate = item.PublishDate.UtcDateTime;
+            }
+            else
+            {
+                publishDate = DateTime.SpecifyKind(publishDate, DateTimeKind.Utc);
+            }
+
+            var news = new News
+            {
+                Title = item.Title.Text,
+                Link = item.Links.FirstOrDefault()?.Uri.ToString(),
+                PublishDate = publishDate,
+                Publisher = publisher,
+                Category = category,
+                Image = ExtractImage(item, publisher)
+            };
+
+            newsList.Add(news);
+            await InternationalAddNewsIfNotExists(news);
+        }
+
+        return newsList;
+    }
+
+
+    public async Task<List<News>> GetNewsFromRssFeed(string url, string publisher, string category)
+          {
+        if (publisher == "Mackolik")
         {
             var feed = await GetFeed(url);
             var newsList = new List<News>();
@@ -34,7 +73,7 @@ public class NewsService
                 {
                     Title = item.Title.Text,
                     Link = link.ToString(),
-                    PublishDate = item.PublishDate.DateTime,
+                    PublishDate = item.PublishDate.DateTime.AddHours(3),
                     Publisher = publisher,
                     Category = category,
                     Image = ExtractImage(item, publisher)
@@ -45,7 +84,7 @@ public class NewsService
             }
             return newsList;
         }
-        else if (publisher=="Trt Spor")
+        else if (publisher == "Trt Spor")
         {
             var feed = await GetFeed(url);
             var newsList = new List<News>();
@@ -68,30 +107,52 @@ public class NewsService
             }
             return newsList;
         }
+        else if (publisher.Contains("Onedio"))
+        {
+            var feed = await GetFeed(url);
+            var newsList = new List<News>();
+            foreach (var item in feed.Items)
+            {
+                var news = new News
+                {
+                    Title = item.Title.Text,
+                    Link = item.Links.FirstOrDefault()?.Uri.ToString(),
+                    PublishDate = item.PublishDate.DateTime.AddHours(3),
+                    Publisher = publisher,
+                    Category = category,
+                    Image = ExtractImage(item, publisher)
+                };
+
+                newsList.Add(news);
+                await AddNewsIfNotExists(news);
+
+            }
+            return newsList;
+        }
         else
         {
 
-        var feed = await GetFeed(url);
-        var newsList = new List<News>();
+            var feed = await GetFeed(url);
+            var newsList = new List<News>();
 
-        foreach (var item in feed.Items)
-        {
-            var news = new News
+            foreach (var item in feed.Items)
             {
-                Title = item.Title.Text,
-                Link = item.Links.FirstOrDefault()?.Uri.ToString(),
-                PublishDate = item.PublishDate.DateTime,
-                Publisher = publisher,
-                Category = category,
-                Image = ExtractImage(item, publisher)
-            };
+                var news = new News
+                {
+                    Title = item.Title.Text,
+                    Link = item.Links.FirstOrDefault()?.Uri.ToString(),
+                    PublishDate = item.PublishDate.DateTime,
+                    Publisher = publisher,
+                    Category = category,
+                    Image = ExtractImage(item, publisher)
+                };
 
-            newsList.Add(news);
-            await AddNewsIfNotExists(news);
-        }
-        
-      
-        return newsList;
+                newsList.Add(news);
+                await AddNewsIfNotExists(news);
+            }
+
+
+            return newsList;
         }
     }
 
@@ -108,6 +169,24 @@ public class NewsService
             {
                 await connection.ExecuteAsync(@"
                     INSERT INTO news (title, image, publishdate, link, publisher, category) 
+                    VALUES (@Title, @Image, @PublishDate, @Link, @Publisher, @Category)",
+                    news);
+            }
+        }
+    }
+    public async Task InternationalAddNewsIfNotExists(News news)
+    {
+        using (var connection = new NpgsqlConnection(_connectionString))
+        {
+            await connection.OpenAsync();
+
+            var exists = await connection.QueryFirstOrDefaultAsync<bool>(
+                "SELECT 1 FROM newsinternational WHERE link = @Link", new { news.Link });
+
+            if (!exists)
+            {
+                await connection.ExecuteAsync(@"
+                    INSERT INTO newsinternational (title, image, publishdate, link, publisher, category) 
                     VALUES (@Title, @Image, @PublishDate, @Link, @Publisher, @Category)",
                     news);
             }
@@ -147,12 +226,39 @@ public class NewsService
             case "Arkeofili":
                 return ExtractArkeofiliImage(item);
             case "Onedio":
+                return ExtractOnedioGundemImage(item);
+            case "Onedio Yaşam":
                 return ExtractOnedioImage(item);
             case "Mynet":
                 return ExtractMynetImage(item);
+          
             case "Beyaz Perde":
                 return ExtractBeyazPerdeImage(item);
+            case "BBC International":
+                return ExtractBBCInternationalImage(item);
+            case "Yahoo World":
+                return ExtractYahooWorldImage(item);
+            case "IGN":
+                return ExtractIGNImage(item);
+            case "Sky News":
+                return ExtractSkyNewsImage(item);
+            case "BuzzFeed":
+                return ExtractBuzzFeedImage(item);
+            case "Independent Life":
+                return ExtractIndependentLifeImage(item);
+            case "Yahoo Life":
+                return ExtractYahooLivingImage(item);
+            case "Independent Sport":
+                return ExtractIndependentSportImage(item);
+            case "Global News Sport":
+                return ExtractGlobalNewsImage(item);
+            case "New Scientist":
+                return ExtractNewscientistImage(item);
           
+            case "Independent Science":
+                return ExtractIndependentScienceImage(item);
+            case "SciTech":
+                return ExtractSciTechImage(item);
             default:
                 return null;
         }
@@ -219,7 +325,7 @@ public class NewsService
         return imageUrl;
 
     }
-
+    
     private string ExtractMegabaytImage(SyndicationItem item)
     {
 
@@ -239,6 +345,17 @@ public class NewsService
 
 
     }
+    private string ExtractOnedioGundemImage(SyndicationItem item)
+    {
+
+        var enclosure = item.ElementExtensions
+                         .FirstOrDefault(e => e.OuterName == "content" && e.OuterNamespace == "http://search.yahoo.com/mrss/");
+        var element = enclosure.GetObject<XElement>();
+        var url = element.Attribute("url")?.Value;
+        return url;
+
+
+    }
     private string ExtractOnedioTestlerImage(SyndicationItem item)
     {
 
@@ -248,6 +365,209 @@ public class NewsService
         var url = element.Attribute("url")?.Value;
         return url;
 
+
+    }
+    private string ExtractSciTechImage(SyndicationItem item)
+    {
+        string imageUrl = null;
+
+        string description = item.Summary?.Text;
+
+        if (!string.IsNullOrEmpty(description))
+        {
+
+            var startIndex = description.IndexOf("src=\"") + 5;
+            var endIndex = description.IndexOf("\"", startIndex);
+
+            if (startIndex > 4 && endIndex > startIndex)
+            {
+                imageUrl = description.Substring(startIndex, endIndex - startIndex);
+            }
+        }
+        return imageUrl;
+
+    }
+   
+    private string ExtractIndependentSportImage(SyndicationItem item)
+    {
+
+        var enclosure = item.ElementExtensions
+                            .FirstOrDefault(e => e.OuterName == "content" && e.OuterNamespace == "http://search.yahoo.com/mrss/");
+
+
+        if (enclosure == null)
+        {
+
+            return null;
+        }
+
+
+        var element = enclosure.GetObject<XElement>();
+
+
+        var url = element?.Attribute("url")?.Value;
+
+        return url;
+
+
+    }
+    private string ExtractIndependentScienceImage(SyndicationItem item)
+    {
+
+        var enclosure = item.ElementExtensions
+                             .FirstOrDefault(e => e.OuterName == "content" && e.OuterNamespace == "http://search.yahoo.com/mrss/");
+
+
+        if (enclosure == null)
+        {
+
+            return null;
+        }
+
+
+        var element = enclosure.GetObject<XElement>();
+
+
+        var url = element?.Attribute("url")?.Value;
+
+        return url;
+
+
+    }
+    private string ExtractIndependentLifeImage(SyndicationItem item)
+    {
+
+        var enclosure = item.ElementExtensions
+                            .FirstOrDefault(e => e.OuterName == "content" && e.OuterNamespace == "http://search.yahoo.com/mrss/");
+
+
+        if (enclosure == null)
+        {
+
+            return null;
+        }
+
+
+        var element = enclosure.GetObject<XElement>();
+
+
+        var url = element?.Attribute("url")?.Value;
+
+        return url;
+
+
+    }
+    private string ExtractGlobalNewsImage(SyndicationItem item)
+    {
+
+        var enclosure = item.ElementExtensions
+                             .FirstOrDefault(e => e.OuterName == "content" && e.OuterNamespace == "http://search.yahoo.com/mrss/");
+
+
+        if (enclosure == null)
+        {
+
+            return null;
+        }
+
+
+        var element = enclosure.GetObject<XElement>();
+
+
+        var url = element?.Attribute("url")?.Value;
+
+        return url;
+
+
+    }
+    private string ExtractYahooWorldImage(SyndicationItem item)
+    {
+
+        var enclosure = item.ElementExtensions
+                              .FirstOrDefault(e => e.OuterName == "content" && e.OuterNamespace == "http://search.yahoo.com/mrss/");
+
+
+        if (enclosure == null)
+        {
+
+            return null;
+        }
+
+
+        var element = enclosure.GetObject<XElement>();
+
+
+        var url = element?.Attribute("url")?.Value;
+
+        return url;
+
+
+    }
+    private string ExtractIGNImage(SyndicationItem item)
+    {
+
+        var enclosure = item.ElementExtensions
+                              .FirstOrDefault(e => e.OuterName == "content" && e.OuterNamespace == "http://search.yahoo.com/mrss/");
+
+
+        if (enclosure == null)
+        {
+
+            return null;
+        }
+
+
+        var element = enclosure.GetObject<XElement>();
+
+
+        var url = element?.Attribute("url")?.Value;
+
+        return url;
+
+
+    }
+    private string ExtractYahooLivingImage(SyndicationItem item)
+    {
+
+        var enclosure = item.ElementExtensions
+                           .FirstOrDefault(e => e.OuterName == "content" && e.OuterNamespace == "http://search.yahoo.com/mrss/");
+
+
+        if (enclosure == null)
+        {
+
+            return null;
+        }
+
+
+        var element = enclosure.GetObject<XElement>();
+
+
+        var url = element?.Attribute("url")?.Value;
+
+        return url;
+
+
+    }
+
+
+    private string ExtractBBCInternationalImage(SyndicationItem item)
+    {
+
+        var enclosure = item.ElementExtensions
+                        .FirstOrDefault(e => e.OuterName == "enclosure");
+        if (enclosure != null)
+        {
+            return enclosure?.GetObject<XElement>().Attribute("url")?.Value;
+        }
+        else
+        {
+            var thumbnail = item.ElementExtensions
+                          .FirstOrDefault(e => e.OuterName == "thumbnail");
+
+            return thumbnail?.GetObject<XElement>().Attribute("url")?.Value;
+
+        }
 
     }
     private string ExtractOnedioImage(SyndicationItem item)
@@ -300,6 +620,25 @@ public class NewsService
         }
 
     }
+    private string ExtractNewscientistImage(SyndicationItem item)
+    {
+
+        var enclosure = item.ElementExtensions
+                        .FirstOrDefault(e => e.OuterName == "enclosure");
+        if (enclosure != null)
+        {
+            return enclosure?.GetObject<XElement>().Attribute("url")?.Value;
+        }
+        else
+        {
+            var thumbnail = item.ElementExtensions
+                          .FirstOrDefault(e => e.OuterName == "thumbnail");
+
+            return thumbnail?.GetObject<XElement>().Attribute("url")?.Value;
+
+        }
+
+    }
     private string ExtractCumhuriyetImage(SyndicationItem item)
     {
      
@@ -316,6 +655,44 @@ public class NewsService
           
                 return thumbnail?.GetObject<XElement>().Attribute("url")?.Value;
           
+        }
+
+    }
+    private string ExtractBuzzFeedImage(SyndicationItem item)
+    {
+
+        var enclosure = item.ElementExtensions
+                        .FirstOrDefault(e => e.OuterName == "enclosure");
+        if (enclosure != null)
+        {
+            return enclosure?.GetObject<XElement>().Attribute("url")?.Value;
+        }
+        else
+        {
+            var thumbnail = item.ElementExtensions
+                          .FirstOrDefault(e => e.OuterName == "thumbnail");
+
+            return thumbnail?.GetObject<XElement>().Attribute("url")?.Value;
+
+        }
+
+    }
+    private string ExtractSkyNewsImage(SyndicationItem item)
+    {
+
+        var enclosure = item.ElementExtensions
+                        .FirstOrDefault(e => e.OuterName == "enclosure");
+        if (enclosure != null)
+        {
+            return enclosure?.GetObject<XElement>().Attribute("url")?.Value;
+        }
+        else
+        {
+            var thumbnail = item.ElementExtensions
+                          .FirstOrDefault(e => e.OuterName == "thumbnail");
+
+            return thumbnail?.GetObject<XElement>().Attribute("url")?.Value;
+
         }
 
     }

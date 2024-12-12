@@ -56,7 +56,54 @@ namespace pulse.Controllers
                 return StatusCode(500, $"Internal server error: {ex.Message}");
             }
         }
+        [HttpPost("skynews")]
+        public async Task<IActionResult> PostSkyNewsRssFeed([FromBody] NewsDetails newsDetails)
+        {
+            var url = newsDetails.url;
+            try
+            {
+                using var reader = XmlReader.Create(url);
+                var feed = SyndicationFeed.Load(reader);
 
+                var posts = feed.Items.Select(post =>
+                {
+                    string imageUrl = null;
+
+                    var enclosure = post.ElementExtensions
+                        .FirstOrDefault(e => e.OuterName == "enclosure");
+                    if (enclosure != null)
+                    {
+                        var element = enclosure.GetObject<XElement>();
+                        imageUrl = element.Attribute("url")?.Value;
+                    }
+
+                    if (imageUrl == null)
+                    {
+                        var thumbnail = post.ElementExtensions
+                            .FirstOrDefault(e => e.OuterName == "thumbnail");
+                        if (thumbnail != null)
+                        {
+                            var element = thumbnail.GetObject<XElement>();
+                            imageUrl = element.Attribute("url")?.Value;
+                        }
+                    }
+
+                    return new
+                    {
+                        Title = post.Title.Text,
+                        Link = post.Links.FirstOrDefault()?.Uri.ToString(),
+                        PubDate = post.PublishDate.DateTime,
+                        Image = imageUrl
+                    };
+                }).ToList();
+
+                return Ok(posts);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
+        }
         [HttpPost("cumhuriyet")]
         public async Task<IActionResult> PostCumhuriyetRssFeed([FromBody] NewsDetails newsDetails)
         {
@@ -146,6 +193,10 @@ namespace pulse.Controllers
                 return StatusCode(500, $"Internal server error: {ex.Message}");
             }
         }
+
+
+
+
         [HttpPost("BBC")]
         public async Task<IActionResult> PostBBCRssFeed([FromBody] NewsDetails newsDetails)
         {
@@ -195,7 +246,284 @@ namespace pulse.Controllers
             }
 
         }
+        [HttpPost("YahooWorldRss")]
+        public async Task<IActionResult> PostYahooWorldRssFeed([FromBody] NewsDetails newsDetails)
+        {
+            var url = newsDetails.url;
+            try
+            {
+                using var reader = XmlReader.Create(url);
+                var feed = SyndicationFeed.Load(reader);
 
+                var posts = feed.Items.Select(post =>
+                {
+                    string imageUrl = null;
+
+                    var enclosure = post.ElementExtensions
+                         .FirstOrDefault(e => e.OuterName == "content" && e.OuterNamespace == "http://search.yahoo.com/mrss/");
+                    if (enclosure != null)
+                    {
+                        var element = enclosure.GetObject<XElement>();
+                        imageUrl = element.Attribute("url")?.Value;
+                    }
+
+
+                    return new
+                    {
+                        Title = post.Title.Text,
+                        Link = post.Links.FirstOrDefault()?.Uri.ToString(),
+                        PubDate = post.PublishDate.DateTime,
+                        Image = imageUrl
+                    };
+                }).ToList();
+
+                return Ok(posts);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
+        }
+        [HttpPost("globalnewssport")]
+        public async Task<IActionResult> PostglobalnewssportRssFeed([FromBody] NewsDetails newsDetails)
+        {
+            var url = newsDetails.url;
+            try
+            {
+                using var reader = XmlReader.Create(url);
+                var feed = SyndicationFeed.Load(reader);
+
+                var posts = feed.Items.Select(post =>
+                {
+                    string imageUrl = null;
+
+                    var enclosure = post.ElementExtensions
+                         .FirstOrDefault(e => e.OuterName == "content" && e.OuterNamespace == "http://search.yahoo.com/mrss/");
+                    if (enclosure != null)
+                    {
+                        var element = enclosure.GetObject<XElement>();
+                        imageUrl = element.Attribute("url")?.Value;
+                    }
+
+
+                    return new
+                    {
+                        Title = post.Title.Text,
+                        Link = post.Links.FirstOrDefault()?.Uri.ToString(),
+                        PubDate = post.PublishDate.DateTime,
+                        Image = imageUrl
+                    };
+                }).ToList();
+
+                return Ok(posts);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
+        }
+        [HttpPost("independentsportnews")]
+        public async Task<IActionResult> PostIndependentSportNewsRssFeed([FromBody] NewsDetails newsDetails)
+        {
+            var url = newsDetails.url;
+            try
+            {
+                using var reader = XmlReader.Create(url);
+                var feed = SyndicationFeed.Load(reader);
+
+                var posts = feed.Items.Select(post =>
+                {
+                    string imageUrl = null;
+
+                    var enclosure = post.ElementExtensions
+                         .FirstOrDefault(e => e.OuterName == "content" && e.OuterNamespace == "http://search.yahoo.com/mrss/");
+                    if (enclosure != null)
+                    {
+                        var element = enclosure.GetObject<XElement>();
+                        imageUrl = element.Attribute("url")?.Value;
+                    }
+
+
+                    return new
+                    {
+                        Title = post.Title.Text,
+                        Link = post.Links.FirstOrDefault()?.Uri.ToString(),
+                        PubDate = post.PublishDate.DateTime,
+                        Image = imageUrl
+                    };
+                }).ToList();
+
+                return Ok(posts);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
+        }
+        [HttpPost("independentsciencenews")]
+        public async Task<IActionResult> PostIndependentScienceNewsRssFeed([FromBody] NewsDetails newsDetails)
+        {
+            var url = newsDetails.url;
+            try
+            {
+                using var reader = XmlReader.Create(url);
+                var feed = SyndicationFeed.Load(reader);
+
+                var posts = feed.Items.Select(post =>
+                {
+                    string imageUrl = null;
+
+                    var enclosure = post.ElementExtensions
+                         .FirstOrDefault(e => e.OuterName == "content" && e.OuterNamespace == "http://search.yahoo.com/mrss/");
+                    if (enclosure != null)
+                    {
+                        var element = enclosure.GetObject<XElement>();
+                        imageUrl = element.Attribute("url")?.Value;
+                    }
+
+
+                    return new
+                    {
+                        Title = post.Title.Text,
+                        Link = post.Links.FirstOrDefault()?.Uri.ToString(),
+                        PubDate = post.PublishDate.DateTime,
+                        Image = imageUrl
+                    };
+                }).ToList();
+
+                return Ok(posts);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
+        }
+        [HttpPost("independentlifenews")]
+        public async Task<IActionResult> PostIndependentLifeNewsRssFeed([FromBody] NewsDetails newsDetails)
+        {
+            var url = newsDetails.url;
+            try
+            {
+                using var reader = XmlReader.Create(url);
+                var feed = SyndicationFeed.Load(reader);
+
+                var posts = feed.Items.Select(post =>
+                {
+                    string imageUrl = null;
+
+                    var enclosure = post.ElementExtensions
+                         .FirstOrDefault(e => e.OuterName == "content" && e.OuterNamespace == "http://search.yahoo.com/mrss/");
+                    if (enclosure != null)
+                    {
+                        var element = enclosure.GetObject<XElement>();
+                        imageUrl = element.Attribute("url")?.Value;
+                    }
+
+
+                    return new
+                    {
+                        Title = post.Title.Text,
+                        Link = post.Links.FirstOrDefault()?.Uri.ToString(),
+                        PubDate = post.PublishDate.DateTime,
+                        Image = imageUrl
+                    };
+                }).ToList();
+
+                return Ok(posts);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
+        }
+        [HttpPost("YahooLivingRss")]
+        public async Task<IActionResult> PostYahooRssFeed([FromBody] NewsDetails newsDetails)
+        {
+            var url = newsDetails.url;
+            try
+            {
+                using var reader = XmlReader.Create(url);
+                var feed = SyndicationFeed.Load(reader);
+
+                var posts = feed.Items.Select(post =>
+                {
+                    string imageUrl = null;
+
+                    var enclosure = post.ElementExtensions
+                         .FirstOrDefault(e => e.OuterName == "content" && e.OuterNamespace == "http://search.yahoo.com/mrss/");
+                    if (enclosure != null)
+                    {
+                        var element = enclosure.GetObject<XElement>();
+                        imageUrl = element.Attribute("url")?.Value;
+                    }
+
+
+                    return new
+                    {
+                        Title = post.Title.Text,
+                        Link = post.Links.FirstOrDefault()?.Uri.ToString(),
+                        PubDate = post.PublishDate.DateTime,
+                        Image = imageUrl
+                    };
+                }).ToList();
+
+                return Ok(posts);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
+        }
+   
+        [HttpPost("BBCInternational")]
+        public async Task<IActionResult> PostBBCInternationalRssFeed([FromBody] NewsDetails newsDetails)
+        {
+            var url = newsDetails.url;
+            try
+            {
+                using var reader = XmlReader.Create(url);
+                var feed = SyndicationFeed.Load(reader);
+
+                var posts = feed.Items.Select(post =>
+                {
+                    string imageUrl = null;
+
+                    var enclosure = post.ElementExtensions
+                        .FirstOrDefault(e => e.OuterName == "enclosure");
+                    if (enclosure != null)
+                    {
+                        var element = enclosure.GetObject<XElement>();
+                        imageUrl = element.Attribute("url")?.Value;
+                    }
+
+                    if (imageUrl == null)
+                    {
+                        var thumbnail = post.ElementExtensions
+                            .FirstOrDefault(e => e.OuterName == "thumbnail");
+                        if (thumbnail != null)
+                        {
+                            var element = thumbnail.GetObject<XElement>();
+                            imageUrl = element.Attribute("url")?.Value;
+                        }
+                    }
+
+                    return new
+                    {
+                        Title = post.Title.Text,
+                        Link = post.Links.FirstOrDefault()?.Uri.ToString(),
+                        PubDate = post.PublishDate.DateTime,
+                        Image = imageUrl
+                    };
+                }).ToList();
+
+                return Ok(posts);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
+
+        }
 
 
         [HttpPost("beyaz-perde")]
@@ -248,6 +576,44 @@ namespace pulse.Controllers
         }
         [HttpPost("onediotest")]
         public async Task<IActionResult> PostOnedioTestRssFeed([FromBody] NewsDetails newsDetails)
+        {
+            var url = newsDetails.url;
+            try
+            {
+                using var reader = XmlReader.Create(url);
+                var feed = SyndicationFeed.Load(reader);
+
+                var posts = feed.Items.Select(post =>
+                {
+                    string imageUrl = null;
+
+                    var enclosure = post.ElementExtensions
+                         .FirstOrDefault(e => e.OuterName == "content" && e.OuterNamespace == "http://search.yahoo.com/mrss/");
+                    if (enclosure != null)
+                    {
+                        var element = enclosure.GetObject<XElement>();
+                        imageUrl = element.Attribute("url")?.Value;
+                    }
+
+
+                    return new
+                    {
+                        Title = post.Title.Text,
+                        Link = post.Links.FirstOrDefault()?.Uri.ToString(),
+                        PubDate = post.PublishDate.DateTime,
+                        Image = imageUrl
+                    };
+                }).ToList();
+
+                return Ok(posts);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
+        }
+        [HttpPost("onediogundem")]
+        public async Task<IActionResult> PostOnedioGundemRssFeed([FromBody] NewsDetails newsDetails)
         {
             var url = newsDetails.url;
             try
@@ -362,9 +728,100 @@ namespace pulse.Controllers
         }
 
 
-      
+        [HttpPost("newscientist")]
+        public async Task<IActionResult> PostNewScientistFeed([FromBody] NewsDetails newsDetails)
+        {
+            var url = newsDetails.url;
+            try
+            {
+                using var reader = XmlReader.Create(url);
+                var feed = SyndicationFeed.Load(reader);
 
-        [HttpPost("arkeofili")]
+                var posts = feed.Items.Select(post =>
+                {
+                    string imageUrl = null;
+
+                    var enclosure = post.ElementExtensions
+                        .FirstOrDefault(e => e.OuterName == "enclosure");
+                    if (enclosure != null)
+                    {
+                        var element = enclosure.GetObject<XElement>();
+                        imageUrl = element.Attribute("url")?.Value;
+                    }
+
+                    if (imageUrl == null)
+                    {
+                        var thumbnail = post.ElementExtensions
+                            .FirstOrDefault(e => e.OuterName == "thumbnail");
+                        if (thumbnail != null)
+                        {
+                            var element = thumbnail.GetObject<XElement>();
+                            imageUrl = element.Attribute("url")?.Value;
+                        }
+                    }
+
+                    return new
+                    {
+                        Title = post.Title.Text,
+                        Link = post.Links.FirstOrDefault()?.Uri.ToString(),
+                        PubDate = post.PublishDate.DateTime,
+                        Image = imageUrl
+                    };
+                }).ToList();
+
+                return Ok(posts);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
+        }
+
+        [HttpPost("SciTech")]
+        public async Task<IActionResult> PostSciTechRssFeed([FromBody] NewsDetails newsDetails)
+        {
+            var url = newsDetails.url;
+            try
+            {
+                using var reader = XmlReader.Create(url);
+                var feed = SyndicationFeed.Load(reader);
+
+                var posts = feed.Items.Select(post =>
+                {
+
+                    string imageUrl = null;
+
+                    string description = post.Summary?.Text;
+
+                    if (!string.IsNullOrEmpty(description))
+                    {
+
+                        var startIndex = description.IndexOf("src=\"") + 5;
+                        var endIndex = description.IndexOf("\"", startIndex);
+
+                        if (startIndex > 4 && endIndex > startIndex)
+                        {
+                            imageUrl = description.Substring(startIndex, endIndex - startIndex);
+                        }
+                    }
+
+                    return new
+                    {
+                        Title = post.Title.Text,
+                        Link = post.Links.FirstOrDefault()?.Uri.ToString(),
+                        PubDate = post.PublishDate.DateTime,
+                        Image = imageUrl
+                    };
+                }).ToList();
+
+                return Ok(posts);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
+        }
+            [HttpPost("arkeofili")]
 public async Task<IActionResult> PostArkeofiliRssFeed([FromBody] NewsDetails newsDetails)
 {
     var url = newsDetails.url;
@@ -527,6 +984,7 @@ public async Task<IActionResult> PostArkeofiliRssFeed([FromBody] NewsDetails new
                 return StatusCode(500, $"Internal server error: {ex.Message}");
             }
         }
+     
         public class NewsDetails
         {
             public string url { get; set; }
