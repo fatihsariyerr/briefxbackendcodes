@@ -1,7 +1,11 @@
 ﻿FROM mcr.microsoft.com/dotnet/aspnet:7.0 AS base
+RUN apt-get update && apt-get install -y tzdata \
+    && ln -fs /usr/share/zoneinfo/Europe/Istanbul /etc/localtime \
+    && dpkg-reconfigure --frontend noninteractive tzdata
 WORKDIR /app
 EXPOSE 80
 EXPOSE 443
+
 
 FROM mcr.microsoft.com/dotnet/sdk:7.0 AS build
 WORKDIR /src
