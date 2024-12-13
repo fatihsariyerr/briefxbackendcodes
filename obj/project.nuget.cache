@@ -1,10 +1,12 @@
 {
   "version": 2,
-  "dgSpecHash": "YpFRXOnrujrZ1pXbi9DF7M/KXeZqtlPApgLIgBnKRWx8qYfRoZx/ZfCIEP4UUij9jv7E3pxEs2l6F0q9B+4PVA==",
+  "dgSpecHash": "TWV9l39AOcQ=",
   "success": true,
   "projectFilePath": "/Users/sariyer/Projects/pulse/pulse/pulse.csproj",
   "expectedPackageFiles": [
     "/Users/sariyer/.nuget/packages/dapper/2.1.35/dapper.2.1.35.nupkg.sha512",
+    "/Users/sariyer/.nuget/packages/magick.net-q8-anycpu/14.2.0/magick.net-q8-anycpu.14.2.0.nupkg.sha512",
+    "/Users/sariyer/.nuget/packages/magick.net.core/14.2.0/magick.net.core.14.2.0.nupkg.sha512",
     "/Users/sariyer/.nuget/packages/microsoft.aspnetcore.openapi/7.0.19/microsoft.aspnetcore.openapi.7.0.19.nupkg.sha512",
     "/Users/sariyer/.nuget/packages/microsoft.entityframeworkcore/7.0.0/microsoft.entityframeworkcore.7.0.0.nupkg.sha512",
     "/Users/sariyer/.nuget/packages/microsoft.entityframeworkcore.abstractions/7.0.0/microsoft.entityframeworkcore.abstractions.7.0.0.nupkg.sha512",
@@ -23,6 +25,9 @@
     "/Users/sariyer/.nuget/packages/microsoft.openapi/1.4.3/microsoft.openapi.1.4.3.nupkg.sha512",
     "/Users/sariyer/.nuget/packages/npgsql/8.0.4/npgsql.8.0.4.nupkg.sha512",
     "/Users/sariyer/.nuget/packages/npgsql.entityframeworkcore.postgresql/7.0.0/npgsql.entityframeworkcore.postgresql.7.0.0.nupkg.sha512",
+    "/Users/sariyer/.nuget/packages/skiasharp/3.116.1/skiasharp.3.116.1.nupkg.sha512",
+    "/Users/sariyer/.nuget/packages/skiasharp.nativeassets.macos/3.116.1/skiasharp.nativeassets.macos.3.116.1.nupkg.sha512",
+    "/Users/sariyer/.nuget/packages/skiasharp.nativeassets.win32/3.116.1/skiasharp.nativeassets.win32.3.116.1.nupkg.sha512",
     "/Users/sariyer/.nuget/packages/swashbuckle.aspnetcore/6.5.0/swashbuckle.aspnetcore.6.5.0.nupkg.sha512",
     "/Users/sariyer/.nuget/packages/swashbuckle.aspnetcore.swagger/6.5.0/swashbuckle.aspnetcore.swagger.6.5.0.nupkg.sha512",
     "/Users/sariyer/.nuget/packages/swashbuckle.aspnetcore.swaggergen/6.5.0/swashbuckle.aspnetcore.swaggergen.6.5.0.nupkg.sha512",

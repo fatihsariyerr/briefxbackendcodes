@@ -6,6 +6,9 @@ using System.Xml;
 using System.Linq;
 using System.Xml.Linq;
 using Microsoft.Extensions.Hosting;
+using System.IO;
+using ImageMagick;
+
 
 namespace pulse.Controllers
 {
@@ -18,7 +21,35 @@ namespace pulse.Controllers
         {
             _httpClient = httpClient;
         }
+        [HttpGet("convert-to-webp")]
+        public async Task<IActionResult> ConvertToWebP([FromQuery] string imageUrl, [FromQuery] int quality = 80)
+        {
+            try
+            {
+                var response = await _httpClient.GetAsync(imageUrl);
+                response.EnsureSuccessStatusCode();
 
+                var imageData = await response.Content.ReadAsByteArrayAsync();
+
+                using var image = new MagickImage(imageData);
+                image.Format = MagickFormat.WebP;
+                if (quality < 0)
+                {
+                    throw new ArgumentOutOfRangeException(nameof(quality), "Quality değeri negatif olamaz.");
+                }
+
+                image.Quality = (uint)quality;
+
+
+                var webpData = image.ToByteArray();
+
+                return File(webpData, "image/webp");
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { error = ex.Message });
+            }
+        }
         [HttpPost("sozcu")]
         public async Task<IActionResult> PostSozcuRssFeed([FromBody] NewsDetails newsDetails)
         {
