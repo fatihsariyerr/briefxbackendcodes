@@ -84,6 +84,49 @@ public class NewsService
             }
             return newsList;
         }
+        else if (publisher == "Anadolu Ajansı")
+        {
+            using var reader = XmlReader.Create(url);
+            var feedDocument = XDocument.Load(reader);
+            var posts = feedDocument.Descendants("item").Select(item => new
+            {
+                Title = item.Element("title")?.Value,
+                Link = item.Element("link")?.Value,
+                PubDate = item.Element("pubDate") != null
+                    ? DateTime.Parse(item.Element("pubDate")?.Value)
+                    : (DateTime?)null,
+                Image = item.Element("image")?.Value 
+            }).ToList();
+
+            using (var connection = new NpgsqlConnection(_connectionString))
+            {
+                await connection.OpenAsync();
+
+                foreach (var post in posts)
+                {
+                    var exists = await connection.QueryFirstOrDefaultAsync<bool>(
+                        "SELECT 1 FROM news WHERE link = @Link",
+                        new { Link = post.Link });
+
+                    if (!exists)
+                    {
+                        await connection.ExecuteAsync(@"
+                    INSERT INTO news (title, image, publishdate, link, publisher, category) 
+                    VALUES (@Title, @Image, @PublishDate, @Link, @Publisher, @Category)",
+                            new
+                            {
+                                Title = post.Title,
+                                Image = post.Image,
+                                PublishDate = post.PubDate,
+                                Link = post.Link,
+                                Publisher = publisher,
+                                Category = category
+                            });
+                    }
+                }
+            }
+            return null;
+        }
         else if (publisher == "Trt Spor")
         {
             var feed = await GetFeed(url);

@@ -50,6 +50,37 @@ namespace pulse.Controllers
                 return BadRequest(new { error = ex.Message });
             }
         }
+
+        [HttpPost("anadoluajansi")]
+        public async Task<IActionResult> PostanadoluajansiRssFeed([FromBody] NewsDetails newsDetails)
+        {
+        
+            var url = newsDetails.url;
+            try
+            {
+                using var reader = XmlReader.Create(url);
+                var feedDocument = XDocument.Load(reader);
+
+                var posts = feedDocument.Descendants("item").Select(item => new
+                {
+                    Title = item.Element("title")?.Value,
+                    Link = item.Element("link")?.Value,
+                    PubDate = item.Element("pubDate") != null
+                        ? DateTime.Parse(item.Element("pubDate")?.Value)
+                        : (DateTime?)null,
+                    Image = item.Element("image")?.Value 
+                }).ToList();
+
+                return Ok(posts);
+
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
+
+        }
+
         [HttpPost("sozcu")]
         public async Task<IActionResult> PostSozcuRssFeed([FromBody] NewsDetails newsDetails)
         {

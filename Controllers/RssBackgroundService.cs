@@ -21,6 +21,7 @@
                 await newsService.GetNewsFromRssFeed("https://www.megabayt.com/rss", "Megabayt", "bilim");
                 await newsService.GetNewsFromRssFeed("https://arkeofili.com/feed/", "Arkeofili", "bilim");
                 await newsService.GetNewsFromRssFeed("https://onedio.com/Publisher/publisher-yasam.rss", "Onedio Yaşam", "yasam");
+                await newsService.GetNewsFromRssFeed("https://www.aa.com.tr/tr/rss/default?cat=guncel", "Anadolu Ajansı", "gundem");
                 await newsService.GetNewsFromRssFeed("https://www.mynet.com/haber/rss/kategori/yasam", "Mynet", "yasam");
                 await newsService.GetNewsFromRssFeed("https://www.beyazperde.com/rss/haberler.xml", "Beyaz Perde", "yasam");
                 await newsService.GetNewsFromRssFeed("https://feeds.bbci.co.uk/turkce/rss.xml", "BBC", "gundem");
