@@ -20,13 +20,12 @@ namespace pulse.Controllers
         public GetNewsController(HttpClient httpClient)
         {
             _httpClient = httpClient;
+            _httpClient.Timeout = TimeSpan.FromSeconds(100);
         }
-        private static readonly SemaphoreSlim _semaphore = new SemaphoreSlim(10); 
-
+      
         [HttpGet("convert-to-webp")]
         public async Task<IActionResult> ConvertToWebP([FromQuery] string imageUrl, [FromQuery] int quality = 80)
         {
-            await _semaphore.WaitAsync(); 
             try
             {
                 var response = await _httpClient.GetAsync(imageUrl);
@@ -36,13 +35,14 @@ namespace pulse.Controllers
 
                 using var image = new MagickImage(imageData);
                 image.Format = MagickFormat.WebP;
-
                 if (quality < 0)
                 {
                     throw new ArgumentOutOfRangeException(nameof(quality), "Quality değeri negatif olamaz.");
                 }
 
                 image.Quality = (uint)quality;
+
+
                 var webpData = image.ToByteArray();
 
                 return File(webpData, "image/webp");
@@ -50,10 +50,6 @@ namespace pulse.Controllers
             catch (Exception ex)
             {
                 return BadRequest(new { error = ex.Message });
-            }
-            finally
-            {
-                _semaphore.Release(); 
             }
         }
 
