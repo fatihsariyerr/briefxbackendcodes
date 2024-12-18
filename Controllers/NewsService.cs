@@ -56,12 +56,19 @@ public class NewsService
 
 
     public async Task<List<News>> GetNewsFromRssFeed(string url, string publisher, string category)
-          {
+    {
+        var feed = await GetFeed(url);
+
+        if (feed == null)
+        {
+            Console.WriteLine($"RSS akışı alınamadı: {url}");
+            return new List<News>();
+        }
+
+        var newsList = new List<News>();
+
         if (publisher == "Mackolik")
         {
-            var feed = await GetFeed(url);
-            var newsList = new List<News>();
-
             foreach (var item in feed.Items)
             {
                 var link = item.Links.FirstOrDefault()?.Uri.ToString();
@@ -69,10 +76,11 @@ public class NewsService
                 {
                     link = "https://" + link.Substring(2);
                 }
+
                 var news = new News
                 {
                     Title = item.Title.Text,
-                    Link = link.ToString(),
+                    Link = link,
                     PublishDate = item.PublishDate.DateTime.AddHours(3),
                     Publisher = publisher,
                     Category = category,
@@ -82,12 +90,12 @@ public class NewsService
                 newsList.Add(news);
                 await AddNewsIfNotExists(news);
             }
-            return newsList;
         }
         else if (publisher == "Anadolu Ajansı")
         {
             using var reader = XmlReader.Create(url);
             var feedDocument = XDocument.Load(reader);
+
             var posts = feedDocument.Descendants("item").Select(item => new
             {
                 Title = item.Element("title")?.Value,
@@ -95,46 +103,39 @@ public class NewsService
                 PubDate = item.Element("pubDate") != null
                     ? DateTime.Parse(item.Element("pubDate")?.Value)
                     : (DateTime?)null,
-                Image = item.Element("image")?.Value 
+                Image = item.Element("image")?.Value
             }).ToList();
 
-            using (var connection = new NpgsqlConnection(_connectionString))
+            using var connection = new NpgsqlConnection(_connectionString);
+            await connection.OpenAsync();
+
+            foreach (var post in posts)
             {
-                await connection.OpenAsync();
+                var exists = await connection.QueryFirstOrDefaultAsync<bool>(
+                    "SELECT 1 FROM news WHERE link = @Link", new { Link = post.Link });
 
-                foreach (var post in posts)
+                if (!exists)
                 {
-                    var exists = await connection.QueryFirstOrDefaultAsync<bool>(
-                        "SELECT 1 FROM news WHERE link = @Link",
-                        new { Link = post.Link });
-
-                    if (!exists)
-                    {
-                        await connection.ExecuteAsync(@"
+                    await connection.ExecuteAsync(@"
                     INSERT INTO news (title, image, publishdate, link, publisher, category) 
                     VALUES (@Title, @Image, @PublishDate, @Link, @Publisher, @Category)",
-                            new
-                            {
-                                Title = post.Title,
-                                Image = post.Image,
-                                PublishDate = post.PubDate,
-                                Link = post.Link,
-                                Publisher = publisher,
-                                Category = category
-                            });
-                    }
+                        new
+                        {
+                            Title = post.Title,
+                            Image = post.Image,
+                            PublishDate = post.PubDate,
+                            Link = post.Link,
+                            Publisher = publisher,
+                            Category = category
+                        });
                 }
             }
-            return null;
         }
-        else if (publisher == "Trt Spor")
+        else
         {
-            var feed = await GetFeed(url);
-            var newsList = new List<News>();
-
             foreach (var item in feed.Items)
             {
-                var link = item.Links.FirstOrDefault(l => l.RelationshipType == "alternate")?.Uri.ToString();
+                var link = item.Links.FirstOrDefault()?.Uri.ToString();
                 var news = new News
                 {
                     Title = item.Title.Text,
@@ -148,56 +149,11 @@ public class NewsService
                 newsList.Add(news);
                 await AddNewsIfNotExists(news);
             }
-            return newsList;
         }
-        else if (publisher.Contains("Onedio"))
-        {
-            var feed = await GetFeed(url);
-            var newsList = new List<News>();
-            foreach (var item in feed.Items)
-            {
-                var news = new News
-                {
-                    Title = item.Title.Text,
-                    Link = item.Links.FirstOrDefault()?.Uri.ToString(),
-                    PublishDate = item.PublishDate.DateTime.AddHours(3),
-                    Publisher = publisher,
-                    Category = category,
-                    Image = ExtractImage(item, publisher)
-                };
 
-                newsList.Add(news);
-                await AddNewsIfNotExists(news);
-
-            }
-            return newsList;
-        }
-        else
-        {
-
-            var feed = await GetFeed(url);
-            var newsList = new List<News>();
-
-            foreach (var item in feed.Items)
-            {
-                var news = new News
-                {
-                    Title = item.Title.Text,
-                    Link = item.Links.FirstOrDefault()?.Uri.ToString(),
-                    PublishDate = item.PublishDate.DateTime,
-                    Publisher = publisher,
-                    Category = category,
-                    Image = ExtractImage(item, publisher)
-                };
-
-                newsList.Add(news);
-                await AddNewsIfNotExists(news);
-            }
-
-
-            return newsList;
-        }
+        return newsList;
     }
+
 
     public async Task AddNewsIfNotExists(News news)
     {
@@ -236,13 +192,28 @@ public class NewsService
         }
     }
 
-    private async Task<SyndicationFeed> GetFeed(string url)
+    private async Task<SyndicationFeed?> GetFeed(string url)
     {
-        var client = _httpClientFactory.CreateClient();
-        var xmlContent = await client.GetStringAsync(url);
-        using (var reader = XmlReader.Create(new StringReader(xmlContent)))
+        try
         {
-            return SyndicationFeed.Load(reader);
+            var client = _httpClientFactory.CreateClient();
+            client.Timeout = TimeSpan.FromSeconds(100);
+
+            var xmlContent = await client.GetStringAsync(url);
+            using (var reader = XmlReader.Create(new StringReader(xmlContent)))
+            {
+                return SyndicationFeed.Load(reader);
+            }
+        }
+        catch (TaskCanceledException)
+        {
+            Console.WriteLine($"Zaman aşımı oluştu: {url}");
+            return null; 
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Hata oluştu: {ex.Message}");
+            return null; 
         }
     }
 

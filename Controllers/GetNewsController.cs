@@ -21,9 +21,12 @@ namespace pulse.Controllers
         {
             _httpClient = httpClient;
         }
+        private static readonly SemaphoreSlim _semaphore = new SemaphoreSlim(10); 
+
         [HttpGet("convert-to-webp")]
         public async Task<IActionResult> ConvertToWebP([FromQuery] string imageUrl, [FromQuery] int quality = 80)
         {
+            await _semaphore.WaitAsync(); 
             try
             {
                 var response = await _httpClient.GetAsync(imageUrl);
@@ -33,14 +36,13 @@ namespace pulse.Controllers
 
                 using var image = new MagickImage(imageData);
                 image.Format = MagickFormat.WebP;
+
                 if (quality < 0)
                 {
                     throw new ArgumentOutOfRangeException(nameof(quality), "Quality değeri negatif olamaz.");
                 }
 
                 image.Quality = (uint)quality;
-
-
                 var webpData = image.ToByteArray();
 
                 return File(webpData, "image/webp");
@@ -49,7 +51,12 @@ namespace pulse.Controllers
             {
                 return BadRequest(new { error = ex.Message });
             }
+            finally
+            {
+                _semaphore.Release(); 
+            }
         }
+
 
         [HttpPost("anadoluajansi")]
         public async Task<IActionResult> PostanadoluajansiRssFeed([FromBody] NewsDetails newsDetails)
