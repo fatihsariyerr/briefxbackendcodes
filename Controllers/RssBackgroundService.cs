@@ -31,18 +31,18 @@
                     ("https://www.trthaber.com/spor_articles.rss", "Trt Spor", "spor"),
                     ("https://onedio.com/Publisher/publisher-gaming.rss", "Onedio Gaming", "gaming"),
                     ("https://onedio.com/Publisher/publisher-test.rss", "Onedio Testler", "test"),
-                    ("https://feeds.skynews.com/feeds/rss/home.xml/", "Sky News", "news"),
-                    ("https://www.yahoo.com/news/rss", "Yahoo World", "news"),
+                    ("https://feeds.skynews.com/feeds/rss/home.xml/", "Sky News International", "news"),
+                    ("https://www.yahoo.com/news/rss", "Yahoo World International", "news"),
                     ("https://feeds.bbci.co.uk/news/world/rss.xml", "BBC International", "news"),
-                    ("https://www.independent.co.uk/life-style/rss", "Independent Life", "life"),
-                    ("https://www.yahoo.com/lifestyle/rss/", "Yahoo Life", "life"),
-                    ("https://www.independent.co.uk/sport/rss", "Independent Sport", "sport"),
-                    ("https://globalnews.ca/sports/feed/", "Global News Sport", "sport"),
-                    ("https://www.newscientist.com/feed/home/", "New Scientist", "tech"),
-                    ("https://www.independent.co.uk/news/science/rss", "Independent Science", "tech"),
-                    ("https://scitechdaily.com/feed/", "SciTech", "tech"),
-                    ("https://www.buzzfeed.com/quizzes.xml", "BuzzFeed", "test"),
-                    ("http://feeds.feedburner.com/ign/games-all", "IGN", "gaming")
+                    ("https://www.independent.co.uk/life-style/rss", "Independent Life International", "life"),
+                    ("https://www.yahoo.com/lifestyle/rss/", "Yahoo Life International", "life"),
+                    ("https://www.independent.co.uk/sport/rss", "Independent Sport International", "sport"),
+                    ("https://globalnews.ca/sports/feed/", "Global News Sport International", "sport"),
+                    ("https://www.newscientist.com/feed/home/", "New Scientist International", "tech"),
+                    ("https://www.independent.co.uk/news/science/rss", "Independent Science International", "tech"),
+                    ("https://scitechdaily.com/feed/", "SciTech International", "tech"),
+                    ("https://www.buzzfeed.com/quizzes.xml", "BuzzFeed International", "test"),
+                    ("http://feeds.feedburner.com/ign/games-all", "IGN International", "gaming")
                 };
 
                 foreach (var (url, publisher, category) in rssFeeds)
@@ -51,7 +51,7 @@
                     {
                         if (publisher.Contains("International"))
                         {
-                            await newsService.InternationalGetNewsFromRssFeed(url, publisher, category);
+                            await newsService.InternationalGetNewsFromRssFeed(url, publisher.Replace(" International",""), category);
                         }
                         else
                         {
