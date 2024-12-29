@@ -177,10 +177,24 @@ public class NewsService
                     news);
                 var db = _redisConnection.GetDatabase();
                 var redisKey = $"news:{news.Category}";
-                var jsonNews = JsonConvert.SerializeObject(news);  
 
-                await db.ListRightPushAsync(redisKey, jsonNews); 
-                await db.KeyExpireAsync(redisKey, TimeSpan.FromDays(7));  
+                var createdAtUtcPlus3 = DateTime.UtcNow.AddHours(3);
+
+                var newsWithCreatedAt = new
+                {
+                    news.Title,
+                    news.Link,
+                    news.Image,
+                    news.Publisher,
+                    news.PublishDate,
+                    news.Category,
+                    CreatedAt = createdAtUtcPlus3.ToString("yyyy-MM-ddTHH:mm:ss")
+                };
+
+                var jsonNews = JsonConvert.SerializeObject(newsWithCreatedAt);
+
+                await db.ListRightPushAsync(redisKey, jsonNews);
+                await db.KeyExpireAsync(redisKey, TimeSpan.FromDays(7));
 
             }
         }
@@ -206,10 +220,26 @@ public class NewsService
                   news);
                 var db = _redisConnection.GetDatabase();
                 var redisKey = $"newsinternational:{news.Category}";
-                var jsonNews = JsonConvert.SerializeObject(news);
+
+                var createdAtUtcPlus3 = DateTime.UtcNow.AddHours(3);
+
+                var newsWithCreatedAt = new
+                {
+                    news.Title,
+                    news.Link,
+                    news.Image,
+                    news.Publisher,
+                    news.PublishDate,
+                    news.Category,
+                    CreatedAt = createdAtUtcPlus3.ToString("yyyy-MM-ddTHH:mm:ss") 
+                };
+
+                // Veriyi JSON formatına dönüştürüp Redis'e yazıyoruz
+                var jsonNews = JsonConvert.SerializeObject(newsWithCreatedAt);
 
                 await db.ListRightPushAsync(redisKey, jsonNews);
                 await db.KeyExpireAsync(redisKey, TimeSpan.FromDays(7));
+
             }
         }
     }
