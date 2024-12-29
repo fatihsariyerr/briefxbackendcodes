@@ -55,3 +55,6 @@
 /Users/sariyer/Projects/pulse/pulse/bin/Debug/net7.0/runtimes/win-arm64/native/libSkiaSharp.dll
 /Users/sariyer/Projects/pulse/pulse/bin/Debug/net7.0/runtimes/win-x64/native/libSkiaSharp.dll
 /Users/sariyer/Projects/pulse/pulse/bin/Debug/net7.0/runtimes/win-x86/native/libSkiaSharp.dll
+/Users/sariyer/Projects/pulse/pulse/bin/Debug/net7.0/Pipelines.Sockets.Unofficial.dll
+/Users/sariyer/Projects/pulse/pulse/bin/Debug/net7.0/StackExchange.Redis.dll
+/Users/sariyer/Projects/pulse/pulse/bin/Debug/net7.0/Newtonsoft.Json.dll

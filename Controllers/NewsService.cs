@@ -4,7 +4,8 @@ using Npgsql;
 using Dapper;
 using System.Xml.Linq;
 using Microsoft.Extensions.Hosting;
-
+using StackExchange.Redis;
+using Newtonsoft.Json;
 public class NewsService
 {
     private readonly string _connectionString;
@@ -14,7 +15,11 @@ public class NewsService
     {
         _connectionString = configuration.GetConnectionString("PulseDatabase");
         _httpClientFactory = httpClientFactory;
+        _redisConnection = ConnectionMultiplexer.Connect(_redisConnectionString);
+
     }
+    private static string _redisConnectionString = "188.245.43.5:32528,password=iyvqLGHCcu,ssl=False";
+    private static ConnectionMultiplexer _redisConnection;
 
 
 
@@ -170,6 +175,13 @@ public class NewsService
                     INSERT INTO news (title, image, publishdate, link, publisher, category) 
                     VALUES (@Title, @Image, @PublishDate, @Link, @Publisher, @Category)",
                     news);
+                var db = _redisConnection.GetDatabase();
+                var redisKey = $"news:{news.Category}";
+                var jsonNews = JsonConvert.SerializeObject(news);  
+
+                await db.ListRightPushAsync(redisKey, jsonNews); 
+                await db.KeyExpireAsync(redisKey, TimeSpan.FromDays(7));  
+
             }
         }
     }
@@ -188,6 +200,16 @@ public class NewsService
                     INSERT INTO newsinternational (title, image, publishdate, link, publisher, category) 
                     VALUES (@Title, @Image, @PublishDate, @Link, @Publisher, @Category)",
                     news);
+                await connection.ExecuteAsync(@"
+                    INSERT INTO news (title, image, publishdate, link, publisher, category) 
+                    VALUES (@Title, @Image, @PublishDate, @Link, @Publisher, @Category)",
+                  news);
+                var db = _redisConnection.GetDatabase();
+                var redisKey = $"newsinternational:{news.Category}";
+                var jsonNews = JsonConvert.SerializeObject(news);
+
+                await db.ListRightPushAsync(redisKey, jsonNews);
+                await db.KeyExpireAsync(redisKey, TimeSpan.FromDays(7));
             }
         }
     }

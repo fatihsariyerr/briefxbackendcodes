@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "vXrNg0CCUeXALqwGQjyiYse1dSx5693vN/6LyzmaY05Q1qZhZ27K+GivL3gIEzpFR10VgXGDd8LnzXC4i6Mdtw==",
+  "dgSpecHash": "6yj0FAHc0SnRqRdJhp6DfPnJoXx5NkFJErYJDUP6RsdTN/tr/7zz/uEe21J905W9VG+7U4S9Nfx5W5ry1/jaIw==",
   "success": true,
   "projectFilePath": "/Users/sariyer/Projects/pulse/pulse/pulse.csproj",
   "expectedPackageFiles": [
@@ -23,15 +23,19 @@
     "/Users/sariyer/.nuget/packages/microsoft.extensions.options/7.0.0/microsoft.extensions.options.7.0.0.nupkg.sha512",
     "/Users/sariyer/.nuget/packages/microsoft.extensions.primitives/7.0.0/microsoft.extensions.primitives.7.0.0.nupkg.sha512",
     "/Users/sariyer/.nuget/packages/microsoft.openapi/1.4.3/microsoft.openapi.1.4.3.nupkg.sha512",
+    "/Users/sariyer/.nuget/packages/newtonsoft.json/13.0.3/newtonsoft.json.13.0.3.nupkg.sha512",
     "/Users/sariyer/.nuget/packages/npgsql/8.0.4/npgsql.8.0.4.nupkg.sha512",
     "/Users/sariyer/.nuget/packages/npgsql.entityframeworkcore.postgresql/7.0.0/npgsql.entityframeworkcore.postgresql.7.0.0.nupkg.sha512",
+    "/Users/sariyer/.nuget/packages/pipelines.sockets.unofficial/2.2.8/pipelines.sockets.unofficial.2.2.8.nupkg.sha512",
     "/Users/sariyer/.nuget/packages/skiasharp/3.116.1/skiasharp.3.116.1.nupkg.sha512",
     "/Users/sariyer/.nuget/packages/skiasharp.nativeassets.macos/3.116.1/skiasharp.nativeassets.macos.3.116.1.nupkg.sha512",
     "/Users/sariyer/.nuget/packages/skiasharp.nativeassets.win32/3.116.1/skiasharp.nativeassets.win32.3.116.1.nupkg.sha512",
+    "/Users/sariyer/.nuget/packages/stackexchange.redis/2.8.24/stackexchange.redis.2.8.24.nupkg.sha512",
     "/Users/sariyer/.nuget/packages/swashbuckle.aspnetcore/6.5.0/swashbuckle.aspnetcore.6.5.0.nupkg.sha512",
     "/Users/sariyer/.nuget/packages/swashbuckle.aspnetcore.swagger/6.5.0/swashbuckle.aspnetcore.swagger.6.5.0.nupkg.sha512",
     "/Users/sariyer/.nuget/packages/swashbuckle.aspnetcore.swaggergen/6.5.0/swashbuckle.aspnetcore.swaggergen.6.5.0.nupkg.sha512",
     "/Users/sariyer/.nuget/packages/swashbuckle.aspnetcore.swaggerui/6.5.0/swashbuckle.aspnetcore.swaggerui.6.5.0.nupkg.sha512",
+    "/Users/sariyer/.nuget/packages/system.io.pipelines/5.0.1/system.io.pipelines.5.0.1.nupkg.sha512",
     "/Users/sariyer/.nuget/packages/system.servicemodel.syndication/8.0.0/system.servicemodel.syndication.8.0.0.nupkg.sha512"
   ],
   "logs": []
