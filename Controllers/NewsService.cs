@@ -47,7 +47,8 @@ public class NewsService
                 PublishDate = publishDate,
                 Publisher = publisher,
                 Category = category,
-                Image = ExtractImage(item, publisher)
+                Image = ExtractImage(item, publisher),
+                Slug = ToSlug(item.Title.Text)
             };
 
             newsList.Add(news);
