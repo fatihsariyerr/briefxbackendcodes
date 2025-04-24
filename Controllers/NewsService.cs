@@ -4,8 +4,9 @@ using Npgsql;
 using Dapper;
 using System.Xml.Linq;
 using Microsoft.Extensions.Hosting;
-using StackExchange.Redis;
 using Newtonsoft.Json;
+using System.Text.RegularExpressions;
+
 public class NewsService
 {
     private readonly string _connectionString;
@@ -15,11 +16,8 @@ public class NewsService
     {
         _connectionString = configuration.GetConnectionString("PulseDatabase");
         _httpClientFactory = httpClientFactory;
-        _redisConnection = ConnectionMultiplexer.Connect(_redisConnectionString);
-
     }
-    private static string _redisConnectionString = "188.245.43.5:32528,password=iyvqLGHCcu,ssl=False";
-    private static ConnectionMultiplexer _redisConnection;
+ 
 
 
 
@@ -58,6 +56,31 @@ public class NewsService
 
         return newsList;
     }
+
+    public static string ToSlug(string text)
+    {
+        
+        // Türkçe karakterleri doğru şekilde dönüştür
+        var normalized = text
+            .ToLowerInvariant()
+            .Replace("ı", "i")  // ı -> i
+            .Replace("ü", "u")  // ü -> u
+            .Replace("ş", "s")  // ş -> s
+            .Replace("ğ", "g")  // ğ -> g
+            .Replace("ö", "o") // ö->o
+            .Replace("I","i")
+            .Replace("ç", "c"); // ç -> c
+
+
+        // ASCII dışı karakterleri temizle
+        normalized = Regex.Replace(normalized, @"[^a-z0-9\s-]", ""); // özel karakterleri sil
+        normalized = Regex.Replace(normalized, @"\s+", " ").Trim();  // fazla boşlukları düzelt
+        normalized = normalized.Substring(0, normalized.Length <= 80 ? normalized.Length : 80).Trim(); // max 80 karakter
+        normalized = Regex.Replace(normalized, @"\s", "-"); // boşlukları tire yap
+
+        return normalized;
+    }
+
 
 
     public async Task<List<News>> GetNewsFromRssFeed(string url, string publisher, string category)
@@ -118,12 +141,13 @@ public class NewsService
             {
                 var exists = await connection.QueryFirstOrDefaultAsync<bool>(
                     "SELECT 1 FROM news WHERE link = @Link", new { Link = post.Link });
+               
 
                 if (!exists)
                 {
                     await connection.ExecuteAsync(@"
                     INSERT INTO news (title, image, publishdate, link, publisher, category) 
-                    VALUES (@Title, @Image, @PublishDate, @Link, @Publisher, @Category)",
+                    VALUES (@Title, @Image, @PublishDate, @Link, @Publisher, @Category,@Slug)",
                         new
                         {
                             Title = post.Title,
@@ -131,7 +155,8 @@ public class NewsService
                             PublishDate = post.PubDate,
                             Link = post.Link,
                             Publisher = publisher,
-                            Category = category
+                            Category = category,
+                            Slug = ToSlug(post.Title)
                         });
                 }
             }
@@ -171,31 +196,12 @@ public class NewsService
 
             if (!exists)
             {
+                news.Slug = ToSlug(news.Title);
                 await connection.ExecuteAsync(@"
-                    INSERT INTO news (title, image, publishdate, link, publisher, category) 
-                    VALUES (@Title, @Image, @PublishDate, @Link, @Publisher, @Category)",
+                    INSERT INTO news (title, image, publishdate, link, publisher, category,slug) 
+                    VALUES (@Title, @Image, @PublishDate, @Link, @Publisher, @Category,@Slug)",
                     news);
-                var db = _redisConnection.GetDatabase();
-                var redisKey = $"news:{news.Category}";
-
-                var createdAtUtcPlus3 = DateTime.UtcNow.AddHours(3);
-
-                var newsWithCreatedAt = new
-                {
-                    news.Title,
-                    news.Link,
-                    news.Image,
-                    news.Publisher,
-                    news.PublishDate,
-                    news.Category,
-                    CreatedAt = createdAtUtcPlus3.ToString("yyyy-MM-ddTHH:mm:ss")
-                };
-
-                var jsonNews = JsonConvert.SerializeObject(newsWithCreatedAt);
-
-                await db.ListRightPushAsync(redisKey, jsonNews);
-                await db.KeyExpireAsync(redisKey, TimeSpan.FromDays(7));
-
+             
             }
         }
     }
@@ -210,35 +216,13 @@ public class NewsService
 
             if (!exists)
             {
+                news.Slug = ToSlug(news.Title);
                 await connection.ExecuteAsync(@"
-                    INSERT INTO newsinternational (title, image, publishdate, link, publisher, category) 
-                    VALUES (@Title, @Image, @PublishDate, @Link, @Publisher, @Category)",
+                    INSERT INTO newsinternational (title, image, publishdate, link, publisher, category,slug) 
+                    VALUES (@Title, @Image, @PublishDate, @Link, @Publisher, @Category,@Slug)",
                     news);
-                await connection.ExecuteAsync(@"
-                    INSERT INTO news (title, image, publishdate, link, publisher, category) 
-                    VALUES (@Title, @Image, @PublishDate, @Link, @Publisher, @Category)",
-                  news);
-                var db = _redisConnection.GetDatabase();
-                var redisKey = $"newsinternational:{news.Category}";
-
-                var createdAtUtcPlus3 = DateTime.UtcNow.AddHours(3);
-
-                var newsWithCreatedAt = new
-                {
-                    news.Title,
-                    news.Link,
-                    news.Image,
-                    news.Publisher,
-                    news.PublishDate,
-                    news.Category,
-                    CreatedAt = createdAtUtcPlus3.ToString("yyyy-MM-ddTHH:mm:ss") 
-                };
-
-                // Veriyi JSON formatına dönüştürüp Redis'e yazıyoruz
-                var jsonNews = JsonConvert.SerializeObject(newsWithCreatedAt);
-
-                await db.ListRightPushAsync(redisKey, jsonNews);
-                await db.KeyExpireAsync(redisKey, TimeSpan.FromDays(7));
+           
+             
 
             }
         }
@@ -320,7 +304,8 @@ public class NewsService
                 return ExtractGlobalNewsImage(item);
             case "New Scientist":
                 return ExtractNewscientistImage(item);
-          
+            case "WebTekno":
+                return ExtractWebTeknoImage(item);
             case "Independent Science":
                 return ExtractIndependentScienceImage(item);
             case "SciTech":
@@ -453,7 +438,27 @@ public class NewsService
         return imageUrl;
 
     }
-   
+
+    private string ExtractWebTeknoImage(SyndicationItem item)
+    {
+        string imageUrl = null;
+
+        string description = item.Summary?.Text;
+
+        if (!string.IsNullOrEmpty(description))
+        {
+
+            var startIndex = description.IndexOf("src=\"") + 5;
+            var endIndex = description.IndexOf("\"", startIndex);
+
+            if (startIndex > 4 && endIndex > startIndex)
+            {
+                imageUrl = description.Substring(startIndex, endIndex - startIndex);
+            }
+        }
+        return imageUrl;
+
+    }
     private string ExtractIndependentSportImage(SyndicationItem item)
     {
 

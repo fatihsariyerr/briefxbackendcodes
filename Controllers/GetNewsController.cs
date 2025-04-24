@@ -7,7 +7,7 @@ using System.Linq;
 using System.Xml.Linq;
 using Microsoft.Extensions.Hosting;
 using System.IO;
-using ImageMagick;
+
 
 
 namespace pulse.Controllers
@@ -22,36 +22,7 @@ namespace pulse.Controllers
             _httpClient = httpClient;
             _httpClient.Timeout = TimeSpan.FromSeconds(100);
         }
-      
-        [HttpGet("convert-to-webp")]
-        public async Task<IActionResult> ConvertToWebP([FromQuery] string imageUrl, [FromQuery] int quality = 80)
-        {
-            try
-            {
-                var response = await _httpClient.GetAsync(imageUrl);
-                response.EnsureSuccessStatusCode();
-
-                var imageData = await response.Content.ReadAsByteArrayAsync();
-
-                using var image = new MagickImage(imageData);
-                image.Format = MagickFormat.WebP;
-                if (quality < 0)
-                {
-                    throw new ArgumentOutOfRangeException(nameof(quality), "Quality değeri negatif olamaz.");
-                }
-
-                image.Quality = (uint)quality;
-
-
-                var webpData = image.ToByteArray();
-
-                return File(webpData, "image/webp");
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(new { error = ex.Message });
-            }
-        }
+     
 
 
         [HttpPost("anadoluajansi")]
@@ -217,6 +188,87 @@ namespace pulse.Controllers
                 return StatusCode(500, $"Internal server error: {ex.Message}");
             }
         }
+
+        [HttpPost("turunculevye")]
+        public async Task<IActionResult> PostturunculevyeRssFeed([FromBody] NewsDetails newsDetails)
+        {
+
+            var url = newsDetails.url;
+
+            try
+            {
+                using var reader = XmlReader.Create(url);
+                var feed = SyndicationFeed.Load(reader);
+
+                var posts = feed.Items.Select(post =>
+                {
+                    // İlk olarak resim URL'sini almak için mediaContent öğesine bakıyoruz
+                    var mediaContent = post.ElementExtensions
+                        .FirstOrDefault(e => e.OuterName == "content" && e.OuterNamespace == "http://search.yahoo.com/mrss/");
+
+                    string imageUrl = null;
+
+                    // Eğer mediaContent varsa, içeriğini kontrol edelim
+                    if (mediaContent != null)
+                    {
+                        var element = mediaContent.GetObject<XElement>();
+
+                        // XML'deki img etiketi için src özelliğini alıyoruz
+                        imageUrl = element.Descendants("img")
+                                         .FirstOrDefault()?.Attribute("src")?.Value;
+                    }
+
+                    // Eğer hala resim URL'si bulunamadıysa, content:encoded içerisine bakalım
+                    if (imageUrl == null)
+                    {
+                        var contentEncoded = post.ElementExtensions
+                                                  .FirstOrDefault(e => e.OuterName == "encoded" && e.OuterNamespace == "http://purl.org/rss/1.0/modules/content/");
+                        if (contentEncoded != null)
+                        {
+                            var contentElement = contentEncoded.GetObject<XElement>();
+                            var htmlContent = contentElement.Value;
+
+                            // HTML içeriğini arıyoruz ve <img> etiketinin src özelliğini alıyoruz
+                            var imgStartIndex = htmlContent.IndexOf("<img", StringComparison.OrdinalIgnoreCase);
+                            if (imgStartIndex != -1)
+                            {
+                                // <img> etiketinden src özelliğini almak için regex veya basit string manipülasyonu kullanabiliriz
+                                var srcStartIndex = htmlContent.IndexOf("src=\"", imgStartIndex, StringComparison.OrdinalIgnoreCase);
+                                if (srcStartIndex != -1)
+                                {
+                                    srcStartIndex += 5; // src=" ifadesinden sonrasını başlatıyoruz
+                                    var srcEndIndex = htmlContent.IndexOf("\"", srcStartIndex);
+                                    if (srcEndIndex != -1)
+                                    {
+                                        imageUrl = htmlContent.Substring(srcStartIndex, srcEndIndex - srcStartIndex);
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                    var link = post.Links.FirstOrDefault(l => l.RelationshipType == "alternate")?.Uri.ToString();
+
+                    return new
+                    {
+                        Title = post.Title.Text,
+                        Link = link,
+                        PubDate = post.PublishDate.DateTime,
+                        Image = imageUrl
+                    };
+                }).ToList();
+
+                return Ok(posts);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
+
+
+
+        }
+
         [HttpPost("trt-spor")]
         public async Task<IActionResult> PostTrtSporRssFeed([FromBody] NewsDetails newsDetails)
         {

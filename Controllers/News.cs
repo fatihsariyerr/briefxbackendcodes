@@ -6,4 +6,5 @@
     public string Link { get; set; }
     public string Publisher { get; set; }
     public string Category { get; set; }
+    public string Slug { get; set; }
 }

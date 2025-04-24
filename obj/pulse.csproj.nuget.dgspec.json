@@ -21,7 +21,8 @@
         ],
         "sources": {
           "/usr/local/share/dotnet/sdk/7.0.317/Sdks/Microsoft.NET.Sdk.Web/library-packs": {},
-          "https://api.nuget.org/v3/index.json": {}
+          "https://api.nuget.org/v3/index.json": {},
+          "https://pkgs.dev.azure.com/ihhhealthcare-my/ate-hello-world/_packaging/integrationfeed/nuget/v3/index.json": {}
         },
         "frameworks": {
           "net7.0": {
@@ -43,10 +44,6 @@
               "target": "Package",
               "version": "[2.1.35, )"
             },
-            "Magick.NET-Q8-AnyCPU": {
-              "target": "Package",
-              "version": "[14.2.0, )"
-            },
             "Microsoft.AspNetCore.OpenApi": {
               "target": "Package",
               "version": "[7.0.19, )"
@@ -66,10 +63,6 @@
             "SkiaSharp": {
               "target": "Package",
               "version": "[3.116.1, )"
-            },
-            "StackExchange.Redis": {
-              "target": "Package",
-              "version": "[2.8.24, )"
             },
             "Swashbuckle.AspNetCore": {
               "target": "Package",

@@ -1,4 +1,6 @@
-﻿public class RssBackgroundService : BackgroundService
+﻿using static System.Net.WebRequestMethods;
+
+public class RssBackgroundService : BackgroundService
 {
     private readonly IServiceProvider _services;
 
@@ -21,7 +23,9 @@
                     ("https://www.cumhuriyet.com.tr/rss", "Cumhuriyet", "gundem"),
                     ("https://onedio.com/Publisher/publisher-gundem.rss", "Onedio", "gundem"),
                     ("https://www.megabayt.com/rss", "Megabayt", "bilim"),
+                     ("https://www.megabayt.com/rss/oyun", "Megabayt", "gaming"),
                     ("https://arkeofili.com/feed/", "Arkeofili", "bilim"),
+                     ("https://www.webtekno.com/rss.xml", "WebTekno", "bilim"),
                     ("https://onedio.com/Publisher/publisher-yasam.rss", "Onedio Yaşam", "yasam"),
                     ("https://www.aa.com.tr/tr/rss/default?cat=guncel", "Anadolu Ajansı", "gundem"),
                     ("https://www.mynet.com/haber/rss/kategori/yasam", "Mynet", "yasam"),
@@ -66,7 +70,7 @@
                 }
             }
 
-            await Task.Delay(TimeSpan.FromMinutes(1), stoppingToken);
+            await Task.Delay(TimeSpan.FromMinutes(2), stoppingToken);
         }
     }
 }

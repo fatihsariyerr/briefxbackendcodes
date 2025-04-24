@@ -15,72 +15,6 @@
           }
         }
       },
-      "Magick.NET-Q8-AnyCPU/14.2.0": {
-        "type": "package",
-        "dependencies": {
-          "Magick.NET.Core": "14.2.0"
-        },
-        "compile": {
-          "lib/netstandard20/Magick.NET-Q8-AnyCPU.dll": {
-            "related": ".xml"
-          }
-        },
-        "runtime": {
-          "lib/netstandard20/Magick.NET-Q8-AnyCPU.dll": {
-            "related": ".xml"
-          }
-        },
-        "build": {
-          "buildTransitive/netstandard20/Magick.NET-Q8-AnyCPU.targets": {}
-        },
-        "runtimeTargets": {
-          "runtimes/linux-arm64/native/Magick.Native-Q8-arm64.dll.so": {
-            "assetType": "native",
-            "rid": "linux-arm64"
-          },
-          "runtimes/linux-musl-x64/native/Magick.Native-Q8-x64.dll.so": {
-            "assetType": "native",
-            "rid": "linux-musl-x64"
-          },
-          "runtimes/linux-x64/native/Magick.Native-Q8-x64.dll.so": {
-            "assetType": "native",
-            "rid": "linux-x64"
-          },
-          "runtimes/osx-arm64/native/Magick.Native-Q8-arm64.dll.dylib": {
-            "assetType": "native",
-            "rid": "osx-arm64"
-          },
-          "runtimes/osx-x64/native/Magick.Native-Q8-x64.dll.dylib": {
-            "assetType": "native",
-            "rid": "osx-x64"
-          },
-          "runtimes/win-arm64/native/Magick.Native-Q8-arm64.dll": {
-            "assetType": "native",
-            "rid": "win-arm64"
-          },
-          "runtimes/win-x64/native/Magick.Native-Q8-x64.dll": {
-            "assetType": "native",
-            "rid": "win-x64"
-          },
-          "runtimes/win-x86/native/Magick.Native-Q8-x86.dll": {
-            "assetType": "native",
-            "rid": "win-x86"
-          }
-        }
-      },
-      "Magick.NET.Core/14.2.0": {
-        "type": "package",
-        "compile": {
-          "lib/netstandard20/Magick.NET.Core.dll": {
-            "related": ".xml"
-          }
-        },
-        "runtime": {
-          "lib/netstandard20/Magick.NET.Core.dll": {
-            "related": ".xml"
-          }
-        }
-      },
       "Microsoft.AspNetCore.OpenApi/7.0.19": {
         "type": "package",
         "dependencies": {
@@ -407,22 +341,6 @@
           }
         }
       },
-      "Pipelines.Sockets.Unofficial/2.2.8": {
-        "type": "package",
-        "dependencies": {
-          "System.IO.Pipelines": "5.0.1"
-        },
-        "compile": {
-          "lib/net5.0/Pipelines.Sockets.Unofficial.dll": {
-            "related": ".xml"
-          }
-        },
-        "runtime": {
-          "lib/net5.0/Pipelines.Sockets.Unofficial.dll": {
-            "related": ".xml"
-          }
-        }
-      },
       "SkiaSharp/3.116.1": {
         "type": "package",
         "dependencies": {
@@ -473,23 +391,6 @@
           "runtimes/win-x86/native/libSkiaSharp.dll": {
             "assetType": "native",
             "rid": "win-x86"
-          }
-        }
-      },
-      "StackExchange.Redis/2.8.24": {
-        "type": "package",
-        "dependencies": {
-          "Microsoft.Extensions.Logging.Abstractions": "6.0.0",
-          "Pipelines.Sockets.Unofficial": "2.2.8"
-        },
-        "compile": {
-          "lib/net6.0/StackExchange.Redis.dll": {
-            "related": ".xml"
-          }
-        },
-        "runtime": {
-          "lib/net6.0/StackExchange.Redis.dll": {
-            "related": ".xml"
           }
         }
       },
@@ -556,19 +457,6 @@
           "Microsoft.AspNetCore.App"
         ]
       },
-      "System.IO.Pipelines/5.0.1": {
-        "type": "package",
-        "compile": {
-          "ref/netcoreapp2.0/System.IO.Pipelines.dll": {
-            "related": ".xml"
-          }
-        },
-        "runtime": {
-          "lib/netcoreapp3.0/System.IO.Pipelines.dll": {
-            "related": ".xml"
-          }
-        }
-      },
       "System.ServiceModel.Syndication/8.0.0": {
         "type": "package",
         "compile": {
@@ -607,55 +495,6 @@
         "lib/netstandard2.0/Dapper.dll",
         "lib/netstandard2.0/Dapper.xml",
         "readme.md"
-      ]
-    },
-    "Magick.NET-Q8-AnyCPU/14.2.0": {
-      "sha512": "K4r9bNkm9bWBm/YrnXiYBj0+bR2axcb8EaF/IP6k2GpvJUqcdsViPh1z+Ap/4MrmwB2vvbSMF3bHWYJkEOXfEQ==",
-      "type": "package",
-      "path": "magick.net-q8-anycpu/14.2.0",
-      "files": [
-        ".nupkg.metadata",
-        ".signature.p7s",
-        "Magick.NET.icon.png",
-        "Notice.linux-musl.txt",
-        "Notice.linux.txt",
-        "Notice.osx.txt",
-        "Notice.win.txt",
-        "build/netstandard20/Magick.NET-Q8-AnyCPU.targets",
-        "buildTransitive/netstandard20/Magick.NET-Q8-AnyCPU.targets",
-        "docs/Readme.md",
-        "lib/net8.0/Magick.NET-Q8-AnyCPU.dll",
-        "lib/net8.0/Magick.NET-Q8-AnyCPU.xml",
-        "lib/netstandard20/Magick.NET-Q8-AnyCPU.dll",
-        "lib/netstandard20/Magick.NET-Q8-AnyCPU.xml",
-        "magick.net-q8-anycpu.14.2.0.nupkg.sha512",
-        "magick.net-q8-anycpu.nuspec",
-        "runtimes/linux-arm64/native/Magick.Native-Q8-arm64.dll.so",
-        "runtimes/linux-musl-x64/native/Magick.Native-Q8-x64.dll.so",
-        "runtimes/linux-x64/native/Magick.Native-Q8-x64.dll.so",
-        "runtimes/osx-arm64/native/Magick.Native-Q8-arm64.dll.dylib",
-        "runtimes/osx-x64/native/Magick.Native-Q8-x64.dll.dylib",
-        "runtimes/win-arm64/native/Magick.Native-Q8-arm64.dll",
-        "runtimes/win-x64/native/Magick.Native-Q8-x64.dll",
-        "runtimes/win-x86/native/Magick.Native-Q8-x86.dll"
-      ]
-    },
-    "Magick.NET.Core/14.2.0": {
-      "sha512": "1F0vtPJwmoVg9tvi59VEy6KdmpUXbzKYJOH+TL37DT6kXfqj4iFtOMqD7CXC3G6z2zMgFeF5LX9SSApn8Jhhqg==",
-      "type": "package",
-      "path": "magick.net.core/14.2.0",
-      "files": [
-        ".nupkg.metadata",
-        ".signature.p7s",
-        "Copyright.txt",
-        "Magick.NET.icon.png",
-        "docs/Readme.md",
-        "lib/net8.0/Magick.NET.Core.dll",
-        "lib/net8.0/Magick.NET.Core.xml",
-        "lib/netstandard20/Magick.NET.Core.dll",
-        "lib/netstandard20/Magick.NET.Core.xml",
-        "magick.net.core.14.2.0.nupkg.sha512",
-        "magick.net.core.nuspec"
       ]
     },
     "Microsoft.AspNetCore.OpenApi/7.0.19": {
@@ -1345,29 +1184,6 @@
         "postgresql.png"
       ]
     },
-    "Pipelines.Sockets.Unofficial/2.2.8": {
-      "sha512": "zG2FApP5zxSx6OcdJQLbZDk2AVlN2BNQD6MorwIfV6gVj0RRxWPEp2LXAxqDGZqeNV1Zp0BNPcNaey/GXmTdvQ==",
-      "type": "package",
-      "path": "pipelines.sockets.unofficial/2.2.8",
-      "files": [
-        ".nupkg.metadata",
-        ".signature.p7s",
-        "lib/net461/Pipelines.Sockets.Unofficial.dll",
-        "lib/net461/Pipelines.Sockets.Unofficial.xml",
-        "lib/net472/Pipelines.Sockets.Unofficial.dll",
-        "lib/net472/Pipelines.Sockets.Unofficial.xml",
-        "lib/net5.0/Pipelines.Sockets.Unofficial.dll",
-        "lib/net5.0/Pipelines.Sockets.Unofficial.xml",
-        "lib/netcoreapp3.1/Pipelines.Sockets.Unofficial.dll",
-        "lib/netcoreapp3.1/Pipelines.Sockets.Unofficial.xml",
-        "lib/netstandard2.0/Pipelines.Sockets.Unofficial.dll",
-        "lib/netstandard2.0/Pipelines.Sockets.Unofficial.xml",
-        "lib/netstandard2.1/Pipelines.Sockets.Unofficial.dll",
-        "lib/netstandard2.1/Pipelines.Sockets.Unofficial.xml",
-        "pipelines.sockets.unofficial.2.2.8.nupkg.sha512",
-        "pipelines.sockets.unofficial.nuspec"
-      ]
-    },
     "SkiaSharp/3.116.1": {
       "sha512": "DNDwbRjP+aMo27dV2h/uHCVTcWubWWxHnPLiePNyl24f4Pv43mQ8AQQeseOrKR+J3AOCEs6t0sUjo0aa3j3RWQ==",
       "type": "package",
@@ -1470,29 +1286,6 @@
         "skiasharp.nativeassets.win32.nuspec"
       ]
     },
-    "StackExchange.Redis/2.8.24": {
-      "sha512": "GWllmsFAtLyhm4C47cOCipGxyEi1NQWTFUHXnJ8hiHOsK/bH3T5eLkWPVW+LRL6jDiB3g3izW3YEHgLuPoJSyA==",
-      "type": "package",
-      "path": "stackexchange.redis/2.8.24",
-      "files": [
-        ".nupkg.metadata",
-        ".signature.p7s",
-        "lib/net461/StackExchange.Redis.dll",
-        "lib/net461/StackExchange.Redis.xml",
-        "lib/net472/StackExchange.Redis.dll",
-        "lib/net472/StackExchange.Redis.xml",
-        "lib/net6.0/StackExchange.Redis.dll",
-        "lib/net6.0/StackExchange.Redis.xml",
-        "lib/net8.0/StackExchange.Redis.dll",
-        "lib/net8.0/StackExchange.Redis.xml",
-        "lib/netcoreapp3.1/StackExchange.Redis.dll",
-        "lib/netcoreapp3.1/StackExchange.Redis.xml",
-        "lib/netstandard2.0/StackExchange.Redis.dll",
-        "lib/netstandard2.0/StackExchange.Redis.xml",
-        "stackexchange.redis.2.8.24.nupkg.sha512",
-        "stackexchange.redis.nuspec"
-      ]
-    },
     "Swashbuckle.AspNetCore/6.5.0": {
       "sha512": "FK05XokgjgwlCI6wCT+D4/abtQkL1X1/B9Oas6uIwHFmYrIO9WUD5aLC9IzMs9GnHfUXOtXZ2S43gN1mhs5+aA==",
       "type": "package",
@@ -1583,32 +1376,6 @@
         "swashbuckle.aspnetcore.swaggerui.nuspec"
       ]
     },
-    "System.IO.Pipelines/5.0.1": {
-      "sha512": "qEePWsaq9LoEEIqhbGe6D5J8c9IqQOUuTzzV6wn1POlfdLkJliZY3OlB0j0f17uMWlqZYjH7txj+2YbyrIA8Yg==",
-      "type": "package",
-      "path": "system.io.pipelines/5.0.1",
-      "files": [
-        ".nupkg.metadata",
-        ".signature.p7s",
-        "Icon.png",
-        "LICENSE.TXT",
-        "THIRD-PARTY-NOTICES.TXT",
-        "lib/net461/System.IO.Pipelines.dll",
-        "lib/net461/System.IO.Pipelines.xml",
-        "lib/netcoreapp3.0/System.IO.Pipelines.dll",
-        "lib/netcoreapp3.0/System.IO.Pipelines.xml",
-        "lib/netstandard1.3/System.IO.Pipelines.dll",
-        "lib/netstandard1.3/System.IO.Pipelines.xml",
-        "lib/netstandard2.0/System.IO.Pipelines.dll",
-        "lib/netstandard2.0/System.IO.Pipelines.xml",
-        "ref/netcoreapp2.0/System.IO.Pipelines.dll",
-        "ref/netcoreapp2.0/System.IO.Pipelines.xml",
-        "system.io.pipelines.5.0.1.nupkg.sha512",
-        "system.io.pipelines.nuspec",
-        "useSharedDesignerContext.txt",
-        "version.txt"
-      ]
-    },
     "System.ServiceModel.Syndication/8.0.0": {
       "sha512": "CJxIUwpBkMCPmIx46tFVOt0zpRrYurUHLW6tJBcmyj+MyWpKc6MMcS69B7IdlV/bgtgys073wMIHZX9QOQ1OFA==",
       "type": "package",
@@ -1642,13 +1409,11 @@
   "projectFileDependencyGroups": {
     "net7.0": [
       "Dapper >= 2.1.35",
-      "Magick.NET-Q8-AnyCPU >= 14.2.0",
       "Microsoft.AspNetCore.OpenApi >= 7.0.19",
       "Newtonsoft.Json >= 13.0.3",
       "Npgsql >= 8.0.4",
       "Npgsql.EntityFrameworkCore.PostgreSQL >= 7.0.0",
       "SkiaSharp >= 3.116.1",
-      "StackExchange.Redis >= 2.8.24",
       "Swashbuckle.AspNetCore >= 6.5.0",
       "System.ServiceModel.Syndication >= 8.0.0"
     ]
@@ -1673,7 +1438,8 @@
       ],
       "sources": {
         "/usr/local/share/dotnet/sdk/7.0.317/Sdks/Microsoft.NET.Sdk.Web/library-packs": {},
-        "https://api.nuget.org/v3/index.json": {}
+        "https://api.nuget.org/v3/index.json": {},
+        "https://pkgs.dev.azure.com/ihhhealthcare-my/ate-hello-world/_packaging/integrationfeed/nuget/v3/index.json": {}
       },
       "frameworks": {
         "net7.0": {
@@ -1695,10 +1461,6 @@
             "target": "Package",
             "version": "[2.1.35, )"
           },
-          "Magick.NET-Q8-AnyCPU": {
-            "target": "Package",
-            "version": "[14.2.0, )"
-          },
           "Microsoft.AspNetCore.OpenApi": {
             "target": "Package",
             "version": "[7.0.19, )"
@@ -1718,10 +1480,6 @@
           "SkiaSharp": {
             "target": "Package",
             "version": "[3.116.1, )"
-          },
-          "StackExchange.Redis": {
-            "target": "Package",
-            "version": "[2.8.24, )"
           },
           "Swashbuckle.AspNetCore": {
             "target": "Package",

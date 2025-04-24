@@ -18,7 +18,7 @@ builder.Services.AddSwaggerGen(c =>
     {
         Title = "BriefX Api",
         Version = "v1",
-        Description = "Pulse API Documentation", // İsteğe bağlı açıklama
+        Description = "BriefX API Documentation", // İsteğe bağlı açıklama
     });
 });
 
