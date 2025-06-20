@@ -271,9 +271,9 @@ public class NewsService
             case "BBC":
                 return ExtractBBCImage(item);
             case "Cumhuriyet":
-                return ExtractCumhuriyetImage(item);
+                return ExtractSozcuImage(item);
             case "Megabayt":
-                return ExtractMegabaytImage(item);
+                return ExtractArkeofiliImage(item);
             case "Arkeofili":
                 return ExtractArkeofiliImage(item);
             case "Onedio":
