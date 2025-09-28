@@ -306,7 +306,7 @@ public class NewsService
             case "New Scientist":
                 return ExtractNewscientistImage(item);
             case "WebTekno":
-                return ExtractWebTeknoImage(item);
+                return ExtractSozcuImage(item);
             case "Independent Science":
                 return ExtractIndependentScienceImage(item);
             case "SciTech":
